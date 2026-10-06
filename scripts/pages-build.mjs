@@ -9,7 +9,7 @@ const html='<!doctype html><html lang="pt-PT"><head><meta charset="utf-8"><meta 
 await writeFile('pages-dist/index.html',html);
 const {readFile}=await import('node:fs/promises');
 let js=await readFile('public/tv.js','utf8');
-js=js.replace("fetch('/api/broadcast'", "fetch('"+origin+"/api/broadcast'").replace("fetch('/api/ads'", "fetch('"+origin+"/api/ads'").replace("fetch('/ads-manifest.json'", "fetch('./ads-manifest.json'");
+js=js.replace("fetch('/api/broadcast'", "fetch('"+origin+"/api/broadcast'").replace("fetch('/api/ads'", "fetch('./ads-manifest.json'").replace("fetch('/ads-manifest.json'", "fetch('./ads-manifest.json'");
 js=js.replace('var ads=manifest.ads.filter',"manifest.ads=manifest.ads.map(function(src){return src.indexOf('/ads/')===0?new URL('.'+src,document.baseURI).href:src;});var ads=manifest.ads.filter");
 js=js.replace("return /^\\/ads\\/", "return src.indexOf(new URL('./ads/',document.baseURI).href)===0||/^\\/ads\\/");
 await writeFile('pages-dist/tv.js',js);
