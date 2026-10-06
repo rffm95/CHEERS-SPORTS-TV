@@ -1,0 +1,21 @@
+import {mkdir,writeFile,copyFile,cp} from 'node:fs/promises';
+import {screen} from '../lib/screen.mjs';
+import {buildAds} from './ads-manifest.mjs';
+await buildAds();
+await mkdir('pages',{recursive:true});
+const origin='https://cheers-sports-tv.cccerjn.chatgpt.site';
+// Public server owns API credentials/cache; Pages serves only static presentation.
+const html='<!doctype html><html lang="pt-PT"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>CHEERS SPORTS • Ao vivo</title><link rel="icon" href="./favicon.svg"><link rel="stylesheet" href="./tv.css"></head><body>'+screen.replace('src="/tv.js"','src="./tv.js"')+'</body></html>';
+await writeFile('pages/index.html',html);
+const {readFile}=await import('node:fs/promises');
+let js=await readFile('public/tv.js','utf8');
+js=js.replace("fetch('/api/broadcast'", "fetch('"+origin+"/api/broadcast'").replace("fetch('/api/ads'", "fetch('"+origin+"/api/ads'").replace("fetch('/ads-manifest.json'", "fetch('./ads-manifest.json'");
+js=js.replace('var ads=manifest.ads.filter',"manifest.ads=manifest.ads.map(function(src){return src.indexOf('/ads/')===0?new URL('.'+src,document.baseURI).href:src;});var ads=manifest.ads.filter");
+js=js.replace("return /^\\/ads\\/", "return src.indexOf(new URL('./ads/',document.baseURI).href)===0||/^\\/ads\\/");
+await writeFile('pages/tv.js',js);
+await copyFile('app/globals.css','pages/tv.css');
+await copyFile('public/favicon.svg','pages/favicon.svg');
+await copyFile('public/ads-manifest.json','pages/ads-manifest.json');
+await cp('public/ads','pages/ads',{recursive:true});
+await writeFile('pages/.nojekyll','');
+console.log('GitHub Pages static build ready');

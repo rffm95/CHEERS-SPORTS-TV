@@ -33,3 +33,7 @@ pnpm build
 Testes de dados oficiais, paginação, hora de Lisboa, ordenação de imagens, cache, falhas e retry; simulação de 8 horas de timers e slideshow. A validação visual no browser da TV permanece necessária. Não foram realizados testes de 8 horas em hardware real.
 
 Fontes/documentação: [football-data](https://docs.football-data.org/general/v4/lookup_tables.html), [CoinMarketCap](https://coinmarketcap.com/api/documentation/pro-api-reference/keyless-public-api), [EIA](https://www.eia.gov/opendata/), [Twelve Data](https://twelvedata.com/pricing-business).
+
+## GitHub Pages
+
+O workflow `pages.yml` publica automaticamente o frontend em https://rffm95.github.io/CHEERS-SPORTS-TV/ em cada push para main. O servidor público https://cheers-sports-tv.cccerjn.chatgpt.site fornece dados e cache, protegendo as chaves. Não são necessários segredos nas GitHub Actions.
