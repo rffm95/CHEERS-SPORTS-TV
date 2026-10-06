@@ -1,0 +1,2 @@
+import { screen } from '../lib/screen.mjs';
+export function GET(){return new Response('<!doctype html><html lang="pt-PT"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>CHEERS SPORTS • Ao vivo</title><meta name="description" content="Emissão desportiva do Cheers O Bar, Viseu."><link rel="icon" href="/favicon.svg"><link rel="stylesheet" href="/tv.css"></head><body>'+screen+'</body></html>',{headers:{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-cache'}});}
