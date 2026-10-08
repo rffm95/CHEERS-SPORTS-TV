@@ -1,0 +1,30 @@
+// Local review only: never publish or push this build.
+// Usage: node scripts/review-build.mjs ASSET_DIRECTORY OUTPUT.html
+import {readFile,writeFile} from 'node:fs/promises';
+import path from 'node:path';
+import {screen} from '../lib/screen.mjs';
+const [assets,output]=process.argv.slice(2);
+if(!assets||!output)throw Error('Provide the asset directory and output HTML path.');
+const manifest=JSON.parse(await readFile(path.join(assets,'manifest.json'),'utf8'));
+const snapshot=JSON.parse(await readFile(path.join(assets,'broadcast.json'),'utf8'));
+if(snapshot.version!==1||!Array.isArray(snapshot.leagues)||!manifest.ads.length)throw Error('Review data unavailable.');
+const images={};
+for(const src of manifest.ads){const bytes=await readFile(path.join(assets,path.basename(src)));images[src]='data:image/jpeg;base64,'+bytes.toString('base64');}
+let runtime=await readFile('public/tv.js','utf8');
+runtime=runtime.replace('image.src=src;','image.src=window.CHEERS_REVIEW_IMAGES[src]||src;');
+runtime=runtime.replace("try{var saved=JSON.parse(localStorage.getItem('cheers-tv-cache-v1')||'null');", "try{var saved=window.CHEERS_REVIEW_DATA;");
+runtime=runtime.replace("try{localStorage.setItem('cheers-tv-cache-v1',JSON.stringify(d));}catch{}",'');
+runtime=runtime.replace("function scheduleAd(){clearTimeout(adTimer);adTimer=setTimeout(advanceAd,10000);}","var reviewPaused=false;function scheduleAd(){clearTimeout(adTimer);if(!reviewPaused)adTimer=setTimeout(advanceAd,10000);}");
+runtime=runtime.replace("fullscreen();\n})();",`\n window.CHEERS_REVIEW={next:function(){clearTimeout(adTimer);advanceAd();},previous:function(){if(state.adBusy||!state.ads.length)return;clearTimeout(adTimer);state.adIndex=(state.adIndex-2+state.ads.length)%state.ads.length;preloaded=null;preloadedSrc='';advanceAd();},pause:function(){reviewPaused=!reviewPaused;if(reviewPaused)clearTimeout(adTimer);else{scheduleAd();var progress=el('poster-progress');if(progress){progress.classList.remove('running');requestAnimationFrame(function(){requestAnimationFrame(function(){progress.classList.add('running');});});}}document.body.classList.toggle('review-paused',reviewPaused);return reviewPaused;},fullscreen:fullscreen};\n})();`);
+runtime=runtime.replace("if(e.key!=='Escape'&&e.keyCode!==27)fullscreen();", "if(e.key==='Enter'||e.key==='f'||e.key==='F')fullscreen();");
+const css=await readFile('app/globals.css','utf8');
+const date=new Date(snapshot.generatedAt).toLocaleString('pt-PT',{timeZone:'Europe/Lisbon',day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+const json=value=>JSON.stringify(value).replace(/</g,'\\u003c');
+const setup=`window.CHEERS_REVIEW_IMAGES=${json(images)};window.CHEERS_REVIEW_DATA=${json(snapshot)};window.fetch=function(url){return Promise.resolve({ok:true,json:function(){return Promise.resolve(url==='/api/broadcast'?window.CHEERS_REVIEW_DATA:${json(manifest)});}});};`;
+const controls=`<div class="review-controls" role="toolbar" aria-label="Controlos da prévia"><span>PRÉVIA LOCAL · DADOS ${date}</span><button id="review-prev" type="button" title="Imagem anterior (seta esquerda)">Anterior</button><button id="review-pause" type="button" title="Pausar (espaço)">Pausar</button><button id="review-next" type="button" title="Imagem seguinte (seta direita)">Seguinte</button><button id="review-full" type="button">Ecrã inteiro</button><button id="review-hide" type="button" title="Mostrar/ocultar controlos (T)">Ocultar</button></div><span class="review-label">PRÉVIA LOCAL · T = CONTROLOS</span>`;
+const controlsCSS=`.review-controls{position:fixed;z-index:99;left:50%;bottom:12px;transform:translateX(-50%);padding:10px;display:flex;align-items:center;gap:8px;background:#090f13;color:#f3f1e7;border:1px solid #d8fa65;font:13px Arial;white-space:nowrap;box-shadow:0 4px 18px #0008}.review-controls>span{padding:0 10px;font-size:10px;letter-spacing:.5px}.review-controls button{background:#242d28;border:1px solid #546346;color:#fff;padding:10px 14px;font:700 13px Arial;cursor:pointer}.review-controls button:focus{outline:2px solid #d8fa65}.review-controls.hidden{display:none}.review-label{position:fixed;z-index:98;right:10px;top:2px;padding:3px 7px;background:#080d10b0;color:#a2af9d;font:9px Arial;letter-spacing:1px}.review-paused .poster-position>i:after{animation-play-state:paused!important}@media(max-width:720px){.review-controls{gap:3px;bottom:4px;padding:4px}.review-controls>span{display:none}.review-controls button{font-size:11px;padding:8px}}`;
+const bind=`(function(){var api=window.CHEERS_REVIEW,bar=document.querySelector('.review-controls'),pause=document.getElementById('review-pause');function toggle(){bar.classList.toggle('hidden');}function paused(){pause.textContent=api.pause()?'Continuar':'Pausar';}document.getElementById('review-prev').onclick=api.previous;document.getElementById('review-next').onclick=api.next;pause.onclick=paused;document.getElementById('review-full').onclick=api.fullscreen;document.getElementById('review-hide').onclick=toggle;document.addEventListener('keydown',function(e){if(e.key==='ArrowRight'){e.preventDefault();api.next();}if(e.key==='ArrowLeft'){e.preventDefault();api.previous();}if(e.code==='Space'){e.preventDefault();paused();}if(e.key==='t'||e.key==='T')toggle();});})();`;
+const reviewScreen=screen.replace(/<script src="\/tv.js" defer><\/script>/,'').replace('<div class="poster-layer" id="poster-a">','<div class="poster-layer" id="poster-a" style="display:block;z-index:2">').replace('<img class="poster-image" alt="Publicidade Cheers">','<img class="poster-image" alt="Publicidade Cheers" src="'+images[manifest.ads[0]]+'">');
+const html='<!doctype html><html lang="pt-PT"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>CHEERS SPORTS CLUB — Prévia para teste</title><style>'+css+controlsCSS+'</style></head><body>'+reviewScreen+controls+'<script>'+setup+'\n'+runtime+'\n'+bind+'</script></body></html>';
+await writeFile(output,html);
+console.log(JSON.stringify({file:output,ads:manifest.ads.length,bytes:Buffer.byteLength(html),snapshot:snapshot.generatedAt}));
