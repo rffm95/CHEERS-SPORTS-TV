@@ -26,6 +26,8 @@
   ['O JOGO É AQUI','O BRINDE TAMBÉM.','PEDE NO BALCÃO.','Cocktails · Gin · Cerveja']
  ];
  var adMessages={
+  'pub10-shots-da-casa':['SHOTS DA CASA / VODKA + MARACUJÁ','BOA NOITE COMEÇA COM SHOTS.','PEDE O PACK NO BALCÃO.','6 shots da casa · 10€'],
+  'pub11-regua-heineken':['RÉGUA HEINEKEN','BOA CERVEJA. BOA COMPANHIA.','PEDE UMA RÉGUA.','5 finos Heineken · 7,50€'],
   '1000087629':['MOSKOVSKAYA + RED BULL','A MESA TODA NO MESMO BRINDE.','PEDE A GARRAFA.','Moskovskaya + 6 Red Bull'],
   '1000087630':['BELVEDERE / 6 LITROS','UMA NOITE EM GRANDE.','FALA COM A EQUIPA.','Para celebrar em grande.'],
   '1000087631':['FRAGA DA PENA','HÁ VITÓRIAS QUE PEDEM BOLHAS.','PEDE NO BALCÃO.','Espumante para brindar.'],
