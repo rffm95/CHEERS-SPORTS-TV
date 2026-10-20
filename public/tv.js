@@ -26,6 +26,8 @@
   ['O JOGO É AQUI','O BRINDE TAMBÉM.','PEDE NO BALCÃO.','Cocktails · Gin · Cerveja']
  ];
  var adMessages={
+  'pub12-silk-spice':['SILK & SPICE / TINTO OU BRANCO','DOIS VINHOS. UM BRINDE À ALTURA.','ESCOLHE O TEU VINHO.','22€ por garrafa'],
+  'pub13-jack-blackberry':['JACK DANIEL’S BLACKBERRY','DESCOBRE O LADO BLACKBERRY.','PEDE NO BALCÃO.','Shot 2,50€ · Dose 7€'],
   'pub10-shots-da-casa':['SHOTS DA CASA / VODKA + MARACUJÁ','BOA NOITE COMEÇA COM SHOTS.','PEDE O PACK NO BALCÃO.','6 shots da casa · 10€'],
   'pub11-regua-heineken':['RÉGUA HEINEKEN','BOA CERVEJA. BOA COMPANHIA.','PEDE UMA RÉGUA.','5 finos Heineken · 7,50€'],
   '1000087629':['MOSKOVSKAYA + RED BULL','A MESA TODA NO MESMO BRINDE.','PEDE A GARRAFA.','Moskovskaya + 6 Red Bull'],
