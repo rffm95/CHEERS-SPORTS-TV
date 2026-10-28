@@ -17,5 +17,6 @@ await copyFile('app/globals.css','pages-dist/tv.css');
 await copyFile('public/favicon.svg','pages-dist/favicon.svg');
 await copyFile('public/ads-manifest.json','pages-dist/ads-manifest.json');
 await cp('public/ads','pages-dist/ads',{recursive:true});
+await cp('public/flags','pages-dist/flags',{recursive:true});
 await writeFile('pages-dist/.nojekyll','');
 console.log('GitHub Pages static build ready');

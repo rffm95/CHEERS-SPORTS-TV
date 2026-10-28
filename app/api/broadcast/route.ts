@@ -1,6 +1,7 @@
 import { env } from 'cloudflare:workers';
 import { cached } from '../../../lib/cache.mjs';
-import { leagues, officialTable, officialMatches, selectFixtures, selectResults, cmcQuotes, oilQuote, equityQuotes } from '../../../lib/providers.mjs';
+import { leagues, officialTable, officialMatches, selectResults, cmcQuotes, oilQuote, equityQuotes } from '../../../lib/providers.mjs';
+import { loadFixtureLeagues } from '../../../lib/fixtures.mjs';
 type Entry={payload:any;updatedAt:number;nextAttempt:number};
 const memory=new Map<string,Entry>();
 const inFlight=new Map<string,Promise<any>>();
@@ -15,10 +16,10 @@ export async function GET(){try{
  // Sequential calls stay below free-tier bursts; subsequent TV polls hit R2.
  for(const league of leagues){const result=await shared('standings-'+league.code,30*60000,async()=>officialTable(await football('competitions/'+league.code+'/standings'),league));tables.push({...league,...result.data,updatedAt:result.updatedAt,stale:result.stale,rows:result.data?.rows||[]});}
  const results=await shared('results-PPL',15*60000,async()=>selectResults(officialMatches(await football('competitions/PPL/matches?status=FINISHED'))));
- const fixtures=await shared('fixtures-PPL',60*60000,async()=>officialMatches(await football('competitions/PPL/matches?status=SCHEDULED,TIMED')));
+ const fixtureLeagues=await loadFixtureLeagues(shared,football);
  const oil=await shared('oil-WTI',24*60*60000,async()=>{const q=new URLSearchParams({'api_key':runtime.EIA_API_KEY||'DEMO_KEY','frequency':'daily','data[0]':'value','facets[series][]':'RWTC','sort[0][column]':'period','sort[0][direction]':'desc','length':'5'});return oilQuote(await request('https://api.eia.gov/v2/petroleum/pri/spt/data/?'+q));});
  const crypto=await shared('crypto-CMC',5*60000,async()=>cmcQuotes(await request('https://pro-api.coinmarketcap.com/'+(runtime.CMC_API_KEY?'':'public-api/')+'v3/cryptocurrency/quotes/latest?id=1,1027,5426&convert=USD',runtime.CMC_API_KEY?{'X-CMC_PRO_API_KEY':runtime.CMC_API_KEY}:{})));
 
  const equities=runtime.EQUITIES_DISPLAY_LICENSED==='true'&&runtime.TWELVE_DATA_KEY?await shared('equities',15*60000,async()=>equityQuotes(await request('https://api.twelvedata.com/quote?symbol=AAPL,MSFT,NVDA,AMZN,GOOGL&apikey='+encodeURIComponent(runtime.TWELVE_DATA_KEY!)))):{data:[],updatedAt:null,stale:false};
- return Response.json({version:1,generatedAt:new Date().toISOString(),leagues:tables,results:{...results,data:results.data||[]},fixtures:{...fixtures,data:selectFixtures(fixtures.data||[])},markets:[{kind:'crypto',...crypto},{kind:'equities',...equities},{kind:'oil',...oil}],attribution:['Football data provided by the Football-Data.org API','WTI: U.S. EIA'],pending:{crypto:false,equities:runtime.EQUITIES_DISPLAY_LICENSED!=='true'}},{headers:{'Cache-Control':'no-store','Access-Control-Allow-Origin':'https://rffm95.github.io'}});
+ return Response.json({version:1,generatedAt:new Date().toISOString(),leagues:tables,results:{...results,data:results.data||[]},fixtures:fixtureLeagues[0],fixtureLeagues,markets:[{kind:'crypto',...crypto},{kind:'equities',...equities},{kind:'oil',...oil}],attribution:['Football data provided by the Football-Data.org API','WTI: U.S. EIA'],pending:{crypto:false,equities:runtime.EQUITIES_DISPLAY_LICENSED!=='true'}},{headers:{'Cache-Control':'no-store','Access-Control-Allow-Origin':'https://rffm95.github.io'}});
  }catch{return Response.json({version:1,unavailable:true},{headers:{'Cache-Control':'no-store','Access-Control-Allow-Origin':'https://rffm95.github.io'}});}}

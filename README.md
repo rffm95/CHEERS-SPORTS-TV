@@ -1,8 +1,8 @@
 # CHEERS SPORTS TV
 
-Emissão 16:9 para Smart TV: publicidades a cada 10 segundos, cinco classificações, próximos jogos da Primeira Liga, resultados, cripto e petróleo. Relógio e jogos em `Europe/Lisbon`.
+Emissão 16:9 para Smart TV: publicidades a cada 10 segundos, cinco classificações, próximos jogos da Primeira Liga, La Liga e Premier League, resultados, cripto e petróleo. Relógio e jogos em `Europe/Lisbon`.
 
-O cabeçalho apresenta CHEERS TV, «O JOGO É AQUI.» e a hora sem segundos. As classificações rodam em páginas de sete equipas e o calendário em páginas de quatro jogos, com letras maiores para leitura à distância. A faixa sob os cartazes usa fundo antracite, texto claro e apontamento verde; na régua Heineken destaca «5 FINOS HEINEKEN · 7,50 €».
+O cabeçalho apresenta CHEERS TV, «O JOGO É AQUI.» e a hora sem segundos. As classificações rodam em páginas de sete equipas e o calendário em páginas de quatro jogos, alternando Portugal, Espanha e Inglaterra a cada 20 segundos com a respetiva bandeira junto de «VEM AÍ.». Cada liga mantém a sua paginação; todos os horários são de Portugal. O painel mantém letras maiores para leitura à distância. A faixa sob os cartazes usa fundo antracite, texto claro e apontamento verde; na régua Heineken destaca «5 FINOS HEINEKEN · 7,50 €».
 
 Os resultados permanecem visíveis. Havendo cotações disponíveis, os mercados aparecem durante o último minuto de cada ciclo de três minutos desde a abertura da emissão. Nos outros dois minutos, os resultados ocupam a altura livre com letras maiores, sem deslocar os cartazes ou as laterais.
 
@@ -14,7 +14,7 @@ O build também gera `public/ads-manifest.json` para fallback local. Publicidade
 
 ## Dados e execução
 
-- football-data.org: classificações oficiais das cinco ligas (30 min), resultados Primeira Liga (15 min) e calendário (60 min). Chave exclusivamente no servidor, cabeçalhos de rate limit respeitados; os dados do free tier podem ser atrasados.
+- football-data.org: classificações oficiais das cinco ligas (30 min), resultados Primeira Liga (15 min) e calendários das três ligas (60 min por liga). Chave exclusivamente no servidor, cabeçalhos de rate limit respeitados; os dados do free tier podem ser atrasados.
 - CoinMarketCap v3: BTC/ETH/SOL, preço USD e variação 24h; cache 5 min. Acesso público sem chave, com chave Basic opcional para quota própria. Atribuição visível.
 - EIA: WTI spot USD/barril, publicação diária atrasada; variação entre as duas últimas observações, sempre com data. Atualização diária; usa DEMO_KEY público de baixo volume ou EIA_API_KEY.
 - AAPL/MSFT/NVDA/AMZN/GOOGL: integração Twelve Data preparada, desativada até existirem chave e direitos de exibição externa. Não são apresentadas cotações fictícias. O plano Basic é de uso interno e não cobre a exibição no bar.
