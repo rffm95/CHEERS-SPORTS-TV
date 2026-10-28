@@ -30,7 +30,7 @@ pnpm test
 pnpm build
 ```
 
-**Ecrã inteiro:** botão no canto inferior direito, tecla F ou Enter; alguns browsers de TV exigem usar a opção nativa do browser. Layout de 1920×1080 escalado para o viewport, incluindo 1366×768, sem scroll. Browsers com Fetch, Promise, CSS Grid e Intl/timezones são necessários. Teste no modelo concreto da TV antes de uso contínuo.
+**Ecrã inteiro:** toque/clique na emissão, tecla F ou Enter; alguns browsers de TV exigem usar a opção nativa do browser. Layout de 1920×1080 escalado para o viewport, incluindo 1366×768, sem scroll. Browsers com Fetch, Promise, CSS Grid e Intl/timezones são necessários. Teste no modelo concreto da TV antes de uso contínuo.
 
 ## Validação
 
