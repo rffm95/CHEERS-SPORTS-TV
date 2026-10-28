@@ -2,6 +2,10 @@
 
 Emissão 16:9 para Smart TV: publicidades a cada 10 segundos, cinco classificações, próximos jogos da Primeira Liga, resultados, cripto e petróleo. Relógio e jogos em `Europe/Lisbon`.
 
+O cabeçalho apresenta CHEERS TV, «O JOGO É AQUI.» e a hora sem segundos. As classificações rodam em páginas de sete equipas e o calendário em páginas de quatro jogos, com letras maiores para leitura à distância. A faixa sob os cartazes usa fundo antracite, texto claro e apontamento verde; na régua Heineken destaca «5 FINOS HEINEKEN · 7,50 €».
+
+Os resultados permanecem visíveis. Havendo cotações disponíveis, os mercados aparecem durante o último minuto de cada ciclo de três minutos desde a abertura da emissão. Nos outros dois minutos, os resultados ocupam a altura livre com letras maiores, sem deslocar os cartazes ou as laterais.
+
 ## Publicidades
 
 Adicione `pub1.png`, `pub2.jpg`, `pub10.webp`, etc. a **public/ads/** e faça commit/push para **main**. A emissão publicada descobre os ficheiros automaticamente em até 5 minutos; não precisa de editar listas ou código. A ordem é natural. PNG, JPG/JPEG, WEBP e SVG são aceites; as imagens mantêm a proporção. Os dois SVG incluídos são anúncios iniciais do Cheers e podem ser substituídos.
