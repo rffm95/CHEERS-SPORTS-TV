@@ -5,7 +5,7 @@ await buildAds();
 await mkdir('pages-dist',{recursive:true});
 const origin='https://cheers-sports-tv.cccerjn.chatgpt.site';
 // Public server owns API credentials/cache; Pages serves only static presentation.
-const html='<!doctype html><html lang="pt-PT"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>CHEERS SPORTS • Ao vivo</title><link rel="icon" href="./favicon.svg"><link rel="stylesheet" href="./tv.css?v=soft-light-5"></head><body>'+screen.replace('src="/tv.js','src="./tv.js')+'</body></html>';
+const html='<!doctype html><html lang="pt-PT"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>CHEERS SPORTS • Ao vivo</title><link rel="icon" href="./favicon.svg"><link rel="stylesheet" href="./tv.css?v=warm-white-2700-6"></head><body>'+screen.replace('src="/tv.js','src="./tv.js')+'</body></html>';
 await writeFile('pages-dist/index.html',html);
 const {readFile}=await import('node:fs/promises');
 let js=await readFile('public/tv.js','utf8');
