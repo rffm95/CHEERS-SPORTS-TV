@@ -2,11 +2,12 @@ import { env } from 'cloudflare:workers';
 import { cached } from '../../../lib/cache.mjs';
 import { leagues, officialTable, officialMatches, selectResults, cmcQuotes, oilQuote, equityQuotes } from '../../../lib/providers.mjs';
 import { loadFixtureLeagues } from '../../../lib/fixtures.mjs';
+import { padelQuery, padelTournaments } from '../../../lib/padel.mjs';
 type Entry={payload:any;updatedAt:number;nextAttempt:number};
 const memory=new Map<string,Entry>();
 const inFlight=new Map<string,Promise<any>>();
 let footballBlockedUntil=0;
-const runtime=env as unknown as {BUCKET?:R2Bucket;FOOTBALL_DATA_TOKEN?:string;EIA_API_KEY?:string;CMC_API_KEY?:string;TWELVE_DATA_KEY?:string;EQUITIES_DISPLAY_LICENSED?:string};
+const runtime=env as unknown as {BUCKET?:R2Bucket;FOOTBALL_DATA_TOKEN?:string;EIA_API_KEY?:string;CMC_API_KEY?:string;TWELVE_DATA_KEY?:string;PADEL_API_TOKEN?:string;EQUITIES_DISPLAY_LICENSED?:string};
 const store={async get(key:string){try{if(runtime.BUCKET){const object=await runtime.BUCKET.get('cache-v1/'+key+'.json');if(object)return await object.json<Entry>();}}catch{}return memory.get(key);},async put(key:string,value:Entry){memory.set(key,value);if(runtime.BUCKET)try{await runtime.BUCKET.put('cache-v1/'+key+'.json',JSON.stringify(value));}catch{}}};
 function shared(key:string,ttl:number,loader:()=>Promise<any>){const existing=inFlight.get(key);if(existing)return existing;const p=cached(store,key,ttl,loader).finally(()=>inFlight.delete(key));inFlight.set(key,p);return p;}
 async function request(url:string,headers:Record<string,string>={}){const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),12000);try{const r=await fetch(url,{headers,signal:controller.signal});if(!r.ok){const e=new Error('Provider unavailable') as Error&{retryAfter:number};e.retryAfter=Number(r.headers.get('Retry-After')||120)*1000;throw e;}return await r.json();}finally{clearTimeout(timer);}}
@@ -21,5 +22,7 @@ export async function GET(){try{
  const crypto=await shared('crypto-CMC',5*60000,async()=>cmcQuotes(await request('https://pro-api.coinmarketcap.com/'+(runtime.CMC_API_KEY?'':'public-api/')+'v3/cryptocurrency/quotes/latest?id=1,1027,5426&convert=USD',runtime.CMC_API_KEY?{'X-CMC_PRO_API_KEY':runtime.CMC_API_KEY}:{})));
 
  const equities=runtime.EQUITIES_DISPLAY_LICENSED==='true'&&runtime.TWELVE_DATA_KEY?await shared('equities',15*60000,async()=>equityQuotes(await request('https://api.twelvedata.com/quote?symbol=AAPL,MSFT,NVDA,AMZN,GOOGL&apikey='+encodeURIComponent(runtime.TWELVE_DATA_KEY!)))):{data:[],updatedAt:null,stale:false};
- return Response.json({version:1,generatedAt:new Date().toISOString(),leagues:tables,results:{...results,data:results.data||[]},fixtures:fixtureLeagues[0],fixtureLeagues,markets:[{kind:'crypto',...crypto},{kind:'equities',...equities},{kind:'oil',...oil}],attribution:['Football data provided by the Football-Data.org API','WTI: U.S. EIA'],pending:{crypto:false,equities:runtime.EQUITIES_DISPLAY_LICENSED!=='true'}},{headers:{'Cache-Control':'no-store','Access-Control-Allow-Origin':'https://rffm95.github.io'}});
+ // Optional: without a token the TV keeps its bundled Premier Padel calendar.
+ const padel=runtime.PADEL_API_TOKEN?await shared('padel-premier',6*60*60000,async()=>padelTournaments(await request('https://padelapi.org/api/'+padelQuery(),{Authorization:'Bearer '+runtime.PADEL_API_TOKEN!.trim(),Accept:'application/json'}))):{data:[],updatedAt:null,stale:false};
+ return Response.json({version:1,generatedAt:new Date().toISOString(),leagues:tables,results:{...results,data:results.data||[]},fixtures:fixtureLeagues[0],fixtureLeagues,padel:{...padel,data:padel.data||[]},markets:[{kind:'crypto',...crypto},{kind:'equities',...equities},{kind:'oil',...oil}],attribution:['Football data provided by the Football-Data.org API','WTI: U.S. EIA'],pending:{crypto:false,equities:runtime.EQUITIES_DISPLAY_LICENSED!=='true'}},{headers:{'Cache-Control':'no-store','Access-Control-Allow-Origin':'https://rffm95.github.io'}});
  }catch{return Response.json({version:1,unavailable:true},{headers:{'Cache-Control':'no-store','Access-Control-Allow-Origin':'https://rffm95.github.io'}});}}

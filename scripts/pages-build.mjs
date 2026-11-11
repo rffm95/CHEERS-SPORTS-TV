@@ -5,7 +5,7 @@ await buildAds();
 await mkdir('pages-dist',{recursive:true});
 const origin='https://cheers-sports-tv.cccerjn.chatgpt.site';
 // Public server owns API credentials/cache; Pages serves only static presentation.
-const html='<!doctype html><html lang="pt-PT"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>CHEERS SPORTS • Ao vivo</title><link rel="icon" href="./favicon.svg"><link rel="stylesheet" href="./tv.css?v=lamp-reference-8"></head><body>'+screen.replace('src="/tv.js','src="./tv.js')+'</body></html>';
+const html='<!doctype html><html lang="pt-PT"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>CHEERS SPORTS • Ao vivo</title><link rel="icon" href="./favicon.svg"><link rel="stylesheet" href="./tv.css?v=luxe-2"></head><body>'+screen.replace('src="/tv.js','src="./tv.js')+'</body></html>';
 await writeFile('pages-dist/index.html',html);
 const {readFile}=await import('node:fs/promises');
 let js=await readFile('public/tv.js','utf8');
@@ -16,7 +16,9 @@ await writeFile('pages-dist/tv.js',js);
 await copyFile('app/globals.css','pages-dist/tv.css');
 await copyFile('public/favicon.svg','pages-dist/favicon.svg');
 await copyFile('public/ads-manifest.json','pages-dist/ads-manifest.json');
+await copyFile('public/padel.json','pages-dist/padel.json');
 await cp('public/ads','pages-dist/ads',{recursive:true});
 await cp('public/flags','pages-dist/flags',{recursive:true});
+await cp('public/fonts','pages-dist/fonts',{recursive:true});
 await writeFile('pages-dist/.nojekyll','');
 console.log('GitHub Pages static build ready');
