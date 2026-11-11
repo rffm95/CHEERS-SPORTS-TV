@@ -1,0 +1,4 @@
+Barlow Condensed (c) The Barlow Project Authors (https://github.com/jpt/barlow)
+Playfair Display (c) The Playfair Display Project Authors (https://github.com/clauseggers/Playfair)
+Both fonts are licensed under the SIL Open Font License, Version 1.1 (https://openfontlicense.org).
+Latin subsets, self-hosted so the TV does not depend on external font servers.
