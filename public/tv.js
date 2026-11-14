@@ -70,7 +70,22 @@
   '1000087634':['TAITTINGER','FAZ DESTA NOITE UMA OCASIÃO.','FALA COM A EQUIPA.','Champagne Taittinger.'],
   '1000087635':['MÃOS / DOURO','TINTO OU BRANCO. SEM PRESSAS.','ESCOLHE O TEU VINHO.','Pede à nossa equipa.'],
   '1000087636':['REVELADO / ALENTEJO','O PRÓXIMO BRINDE É ALENTEJANO.','PEDE NO BALCÃO.','Vinho branco Revelado.'],
-  '1000087639':['GREENALL’S + ROYAL BLISS','CÍTRICOS. GELO. GIN. CHEERS.','PEDE O TEU GIN.','Um copo ou uma garrafa para a mesa.']
+  '1000087639':['GREENALL’S + ROYAL BLISS','CÍTRICOS. GELO. GIN. CHEERS.','PEDE O TEU GIN.','Um copo ou uma garrafa para a mesa.'],
+  '1000091326':['COCKTAIL / BASIL SMASH','VERDE. FORA DO ÓBVIO.','PEDE NO BALCÃO.','Gin · Manjericão · Lima'],
+  '1000091327':['COCKTAIL / MOSCOW MULE','TEM GENGIBRE. TEM GARRA.','PEDE NO BALCÃO.','Absolut · Lima · Ginger beer'],
+  '1000091328':['COCKTAIL / WHISKEY SOUR','DOCE? ÁCIDO? SIM.','PEDE NO BALCÃO.','Jameson Black Barrel · Lima'],
+  '1000091329':['GIN / ENGINE','GIN COM ATITUDE.','PEDE O TEU GIN.','Lima · Tónica 1724'],
+  '1000091330':['COCKTAIL / PORN STAR MARTINI','NASCEU PARA DAR NAS VISTAS.','PEDE NO BALCÃO.','Baunilha · Maracujá · Passoã'],
+  '1000091331':['COCKTAIL / ESPRESSO MARTINI','O CAFÉ VESTIU-SE PARA SAIR.','PEDE NO BALCÃO.','Absolut · Licor de café · Café'],
+  '1000091332':['COCKTAIL / NEGRONI','AMARGO. COM BOM GOSTO.','PEDE NO BALCÃO.','Tanqueray · Campari · Vermouth'],
+  '1000091333':['COCKTAIL / MOJITO','FRESCO. SEM FILTRO.','PEDE NO BALCÃO.','Rum · Hortelã · Lima'],
+  '1000091334':['GIN / MONKEY 47','DETALHES FAZEM A DIFERENÇA.','PEDE O TEU GIN.','Limão · Tónica 1724'],
+  '1000091335':['CERVEJA / GUINNESS','O LADO ESCURO DO BOM GOSTO.','PEDE UMA GUINNESS.','Cremosa. Intensa. Inconfundível.'],
+  '1000091336':['GIN / ADAMUS ORIGINAL','O BOM GOSTO TEM PRESENÇA.','PEDE O TEU GIN.','Limão · Tónica 1724'],
+  '1000091337':['GIN / NORDÉS','UMA LUFADA DE BOM GOSTO.','PEDE O TEU GIN.','Uva · Louro · Tónica Mediterranean'],
+  '1000091338':['GIN / GIN MARE','O MEDITERRÂNEO À TUA MESA.','PEDE O TEU GIN.','Manjericão · Tónica 1724'],
+  '1000091339':['GIN / HENDRICK’S','ESTRANHAMENTE IRRESISTÍVEL.','PEDE O TEU GIN.','Pepino · Tónica Fever-Tree Indian'],
+  '1000091340':['COCKTAIL / MOJITO MARACUJÁ','FRESCURA COM PAIXÃO.','PEDE NO BALCÃO.','Rum · Hortelã · Lima · Maracujá']
  };
  function salesMessage(src,index){var file=src.split('/').pop().split('?')[0].replace(/\.jpg$/i,'').replace(/\.(png|jpe?g|webp|svg)$/i,'');var message=adMessages[file]||salesMessages[index%salesMessages.length];['sales-kicker','sales-title','sales-action','sales-detail'].forEach(function(id,i){var node=el(id);if(node)node.textContent=message[i];});var progress=el('poster-progress');if(progress){progress.classList.remove('running');requestAnimationFrame(function(){requestAnimationFrame(function(){progress.classList.add('running');});});}}
  function loadImage(src){return new Promise(function(resolve,reject){var image=new Image();var timer=setTimeout(function(){image.onload=null;image.onerror=null;reject(Error('Image timeout'));},12000);image.onload=function(){image.onload=null;image.onerror=null;function ready(){clearTimeout(timer);resolve(image);}if(typeof image.decode==='function')image.decode().then(ready,function(){clearTimeout(timer);reject(Error('Image decode failed'));});else ready();};image.onerror=function(){clearTimeout(timer);reject(Error('Image unavailable'));};image.src=src;});}
